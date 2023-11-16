@@ -42,4 +42,59 @@ ggplot(all_data, aes(x = time, y = observation, group = subject_id, color = arm)
   labs(title = "Observations Over Time by Subject", x = "Time", y = "Observation")
 
 ```
+```{r}
+# Problem3
+
+```{r}
+# Set design elements
+n <- 30
+sigma <- 5
+mu_values <- 0:6
+alpha <- 0.05
+num_simulations <- 5000
+
+# Function to perform simulations
+simulate_power <- function(mu, n, sigma, num_simulations, alpha) {
+  t_tests <- replicate(num_simulations, {
+    sample_data <- rnorm(n, mean = mu, sd = sigma)
+    t_test_result <- t.test(sample_data, mu = 0)
+    tidy_t_test <- tidy(t_test_result)
+    tidy_t_test
+  }, simplify = FALSE) %>%
+  bind_rows() %>%
+  mutate(rejected = p.value < alpha)
+  
+  data.frame(
+    mu = mu,
+    power = mean(t_tests$rejected),
+    mean_estimate = mean(t_tests$estimate),
+    mean_estimate_rejected = mean(t_tests$estimate[t_tests$rejected])
+  )
+}
+
+# Run simulation for each mu
+results <- map_df(mu_values, ~simulate_power(., n, sigma, num_simulations, alpha))
+
+# Plot the power vs true value of mu
+ggplot(results, aes(x = mu, y = power)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Power vs True Mean", x = "True Mean (mu)", y = "Power")
+
+# Plot the average estimate of mu_hat
+ggplot(results, aes(x = mu, y = mean_estimate)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Average Estimate of mu_hat vs True Mean", x = "True Mean (mu)", y = "Average Estimate (mu_hat)")
+
+# Overlay average estimate of mu_hat when null is rejected
+ggplot(results, aes(x = mu)) +
+  geom_point(aes(y = mean_estimate)) +
+  geom_point(aes(y = mean_estimate_rejected), color = "red") +
+  geom_line(aes(y = mean_estimate)) +
+  geom_line(aes(y = mean_estimate_rejected), color = "red") +
+  labs(title = "Average Estimate of mu_hat vs True Mean", x = "True Mean (mu)", y = "Average Estimate (mu_hat)")
+
+
+```
 
