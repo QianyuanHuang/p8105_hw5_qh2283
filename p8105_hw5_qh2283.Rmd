@@ -42,10 +42,12 @@ ggplot(all_data, aes(x = time, y = observation, group = subject_id, color = arm)
   labs(title = "Observations Over Time by Subject", x = "Time", y = "Observation")
 
 ```
+Analyzing the spaghetti plot over an 8-week period reveals variability in observations for both the control and experimental groups, with the control group displaying a notably wider spread of data points, suggesting greater variability. Neither group presents a clear, consistent trend; rather, observations for individual subjects fluctuate over time. It is challenging to ascertain definitive differences between the groups without statistical analysis, as both groups include subjects with varying observation levels at different times. Moreover, the data suggest the presence of outliers, particularly in the control group, where certain subjects' observations significantly deviate from the rest at specific times.
+
+
 ```{r}
 # Problem3
 
-```{r}
 # Set design elements
 n <- 30
 sigma <- 5
@@ -80,13 +82,22 @@ ggplot(results, aes(x = mu, y = power)) +
   geom_point() +
   geom_line() +
   labs(title = "Power vs True Mean", x = "True Mean (mu)", y = "Power")
+```
+This plot illustrates the power of the test across different true mean values. Power, which is the probability of correctly rejecting a false null hypothesis, increases with the true mean. Starting near zero when the true mean equals the null hypothesis value (μ = 0), the power rises sharply as the true mean increases, leveling off close to a power of 1. This suggests that as the effect size (difference from the null hypothesis) increases, the test becomes more likely to detect a true effect, indicating a direct relationship between effect size and power.
 
+
+```{r}
 # Plot the average estimate of mu_hat
 ggplot(results, aes(x = mu, y = mean_estimate)) +
   geom_point() +
   geom_line() +
   labs(title = "Average Estimate of mu_hat vs True Mean", x = "True Mean (mu)", y = "Average Estimate (mu_hat)")
-
+```
+The second plot shows a line (black) that represents the average estimate of 
+mu hat plotted against the true mean. The relationship appears to be linear with a slope of approximately 1, indicating that the sample mean is an unbiased estimate of the true mean; as the true mean increases, the average estimate of mu hat increases proportionally.
+  
+  
+```{r}
 # Overlay average estimate of mu_hat when null is rejected
 ggplot(results, aes(x = mu)) +
   geom_point(aes(y = mean_estimate)) +
@@ -97,4 +108,5 @@ ggplot(results, aes(x = mu)) +
 
 
 ```
-
+The third plot overlays a second line (red), representing the average estimate of 
+mu hat only in samples where the null hypothesis was rejected, onto the previous plot. This line generally follows the first line but deviates slightly at certain points. The closeness of the two lines suggests that the sample mean remains a good estimate of the true mean even when the null hypothesis is rejected, albeit with some discrepancies possibly due to the variability in samples that meet the rejection criteria.
